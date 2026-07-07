@@ -1,0 +1,1270 @@
+{
+  "info": {
+    "name": "Restaurant Management API - Fase 2",
+    "description": "Collection para testar o CRUD completo de tipos de usuário, usuários, restaurantes e itens do cardápio.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "donoTypeId",
+      "value": ""
+    },
+    {
+      "key": "clienteTypeId",
+      "value": ""
+    },
+    {
+      "key": "tempUserTypeId",
+      "value": ""
+    },
+    {
+      "key": "ownerUserId",
+      "value": ""
+    },
+    {
+      "key": "clientUserId",
+      "value": ""
+    },
+    {
+      "key": "restaurantId",
+      "value": ""
+    },
+    {
+      "key": "menuItemId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 - Setup",
+      "item": [
+        {
+          "name": "List User Types - Set Default IDs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/user-types",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "user-types"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const userTypes = pm.response.json();",
+                  "const dono = userTypes.find(type => type.name && type.name.trim().toLowerCase() === 'dono de restaurante');",
+                  "const cliente = userTypes.find(type => type.name && type.name.trim().toLowerCase() === 'cliente');",
+                  "",
+                  "pm.test('Default user type Dono de Restaurante exists', function () {",
+                  "    pm.expect(dono).to.not.be.undefined;",
+                  "});",
+                  "",
+                  "pm.test('Default user type Cliente exists', function () {",
+                  "    pm.expect(cliente).to.not.be.undefined;",
+                  "});",
+                  "",
+                  "if (dono) {",
+                  "    pm.collectionVariables.set('donoTypeId', dono.id);",
+                  "}",
+                  "",
+                  "if (cliente) {",
+                  "    pm.collectionVariables.set('clienteTypeId', cliente.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 - User Types CRUD",
+      "item": [
+        {
+          "name": "Create Temporary User Type",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/user-types",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "user-types"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tipo Teste {{$timestamp}}\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.collectionVariables.set('tempUserTypeId', body.id);",
+                  "",
+                  "pm.test('Temporary user type was created', function () {",
+                  "    pm.expect(body.id).to.exist;",
+                  "    pm.expect(body.name).to.include('Tipo Teste');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List User Types",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/user-types",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "user-types"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an array', function () {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Temporary User Type By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/user-types/{{tempUserTypeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "user-types",
+                "{{tempUserTypeId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('tempUserTypeId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('tempUserTypeId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.test('User type ID matches variable', function () {",
+                  "    pm.expect(String(body.id)).to.eql(String(pm.collectionVariables.get('tempUserTypeId')));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Temporary User Type",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/user-types/{{tempUserTypeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "user-types",
+                "{{tempUserTypeId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tipo Teste Atualizado {{$timestamp}}\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('tempUserTypeId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('tempUserTypeId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.test('User type was updated', function () {",
+                  "    pm.expect(body.name).to.include('Tipo Teste Atualizado');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Temporary User Type",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/user-types/{{tempUserTypeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "user-types",
+                "{{tempUserTypeId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('tempUserTypeId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('tempUserTypeId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 - Users CRUD",
+      "item": [
+        {
+          "name": "Create Owner User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"João Dono {{$timestamp}}\",\n  \"email\": \"owner{{$timestamp}}@postman.test\",\n  \"userTypeId\": {{donoTypeId}}\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('donoTypeId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('donoTypeId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.collectionVariables.set('ownerUserId', body.id);",
+                  "",
+                  "pm.test('Owner user was created', function () {",
+                  "    pm.expect(body.id).to.exist;",
+                  "    pm.expect(String(body.userTypeId)).to.eql(String(pm.collectionVariables.get('donoTypeId')));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Client User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Maria Cliente {{$timestamp}}\",\n  \"email\": \"client{{$timestamp}}@postman.test\",\n  \"userTypeId\": {{clienteTypeId}}\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('clienteTypeId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('clienteTypeId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.collectionVariables.set('clientUserId', body.id);",
+                  "",
+                  "pm.test('Client user was created', function () {",
+                  "    pm.expect(body.id).to.exist;",
+                  "    pm.expect(String(body.userTypeId)).to.eql(String(pm.collectionVariables.get('clienteTypeId')));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an array', function () {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Owner User By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{ownerUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{ownerUserId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('ownerUserId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('ownerUserId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.test('Owner user ID matches variable', function () {",
+                  "    pm.expect(String(body.id)).to.eql(String(pm.collectionVariables.get('ownerUserId')));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Client User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{clientUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{clientUserId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Maria Cliente Atualizada {{$timestamp}}\",\n  \"email\": \"client.updated{{$timestamp}}@postman.test\",\n  \"userTypeId\": {{clienteTypeId}}\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('clientUserId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('clientUserId')).to.not.be.empty;",
+                  "});",
+                  "",
+                  "pm.test('clienteTypeId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('clienteTypeId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.test('Client user was updated', function () {",
+                  "    pm.expect(body.name).to.include('Maria Cliente Atualizada');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 - Restaurants CRUD",
+      "item": [
+        {
+          "name": "Create Restaurant",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/restaurants",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "restaurants"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cantina Bella {{$timestamp}}\",\n  \"address\": \"Rua das Flores, 123\",\n  \"cuisineType\": \"Italiana\",\n  \"openingHours\": \"Segunda a sábado, 11h às 23h\",\n  \"ownerId\": {{ownerUserId}}\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('ownerUserId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('ownerUserId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.collectionVariables.set('restaurantId', body.id);",
+                  "",
+                  "pm.test('Restaurant was created', function () {",
+                  "    pm.expect(body.id).to.exist;",
+                  "    pm.expect(String(body.ownerId)).to.eql(String(pm.collectionVariables.get('ownerUserId')));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Restaurants",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/restaurants",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "restaurants"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an array', function () {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Restaurant By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/restaurants/{{restaurantId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "restaurants",
+                "{{restaurantId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('restaurantId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('restaurantId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.test('Restaurant ID matches variable', function () {",
+                  "    pm.expect(String(body.id)).to.eql(String(pm.collectionVariables.get('restaurantId')));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Restaurant",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/restaurants/{{restaurantId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "restaurants",
+                "{{restaurantId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cantina Bella Atualizada {{$timestamp}}\",\n  \"address\": \"Rua Nova, 456\",\n  \"cuisineType\": \"Italiana Contemporânea\",\n  \"openingHours\": \"Todos os dias, 10h às 23h\",\n  \"ownerId\": {{ownerUserId}}\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('restaurantId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('restaurantId')).to.not.be.empty;",
+                  "});",
+                  "",
+                  "pm.test('ownerUserId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('ownerUserId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.test('Restaurant was updated', function () {",
+                  "    pm.expect(body.name).to.include('Cantina Bella Atualizada');",
+                  "    pm.expect(body.cuisineType).to.eql('Italiana Contemporânea');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 - Menu Items CRUD",
+      "item": [
+        {
+          "name": "Create Menu Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/menu-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "menu-items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pizza Margherita {{$timestamp}}\",\n  \"description\": \"Pizza com molho de tomate, mussarela e manjericão\",\n  \"price\": 49.90,\n  \"onlyAvailableInRestaurant\": false,\n  \"photoPath\": \"/images/pizza-margherita.jpg\",\n  \"restaurantId\": {{restaurantId}}\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('restaurantId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('restaurantId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.collectionVariables.set('menuItemId', body.id);",
+                  "",
+                  "pm.test('Menu item was created', function () {",
+                  "    pm.expect(body.id).to.exist;",
+                  "    pm.expect(String(body.restaurantId)).to.eql(String(pm.collectionVariables.get('restaurantId')));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Menu Items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/menu-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "menu-items"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an array', function () {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Menu Item By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/menu-items/{{menuItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "menu-items",
+                "{{menuItemId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('menuItemId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('menuItemId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.test('Menu item ID matches variable', function () {",
+                  "    pm.expect(String(body.id)).to.eql(String(pm.collectionVariables.get('menuItemId')));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Menu Items By Restaurant",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/menu-items/restaurant/{{restaurantId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "menu-items",
+                "restaurant",
+                "{{restaurantId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('restaurantId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('restaurantId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.test('Response is an array', function () {",
+                  "    pm.expect(body).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('At least one menu item belongs to restaurant', function () {",
+                  "    const restaurantId = String(pm.collectionVariables.get('restaurantId'));",
+                  "    const found = body.some(item => String(item.restaurantId) === restaurantId);",
+                  "    pm.expect(found).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Menu Item",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/menu-items/{{menuItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "menu-items",
+                "{{menuItemId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pizza Margherita Especial {{$timestamp}}\",\n  \"description\": \"Pizza com molho de tomate, mussarela, manjericão e parmesão\",\n  \"price\": 59.90,\n  \"onlyAvailableInRestaurant\": true,\n  \"photoPath\": \"/images/pizza-margherita-especial.jpg\",\n  \"restaurantId\": {{restaurantId}}\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('menuItemId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('menuItemId')).to.not.be.empty;",
+                  "});",
+                  "",
+                  "pm.test('restaurantId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('restaurantId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.test('Menu item was updated', function () {",
+                  "    pm.expect(body.name).to.include('Pizza Margherita Especial');",
+                  "    pm.expect(body.onlyAvailableInRestaurant).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Menu Item",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/menu-items/{{menuItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "menu-items",
+                "{{menuItemId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('menuItemId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('menuItemId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06 - Cleanup",
+      "item": [
+        {
+          "name": "Delete Restaurant",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/restaurants/{{restaurantId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "restaurants",
+                "{{restaurantId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('restaurantId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('restaurantId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Client User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{clientUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{clientUserId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('clientUserId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('clientUserId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Owner User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{ownerUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{ownerUserId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('ownerUserId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('ownerUserId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Temporary User Type - Safety Cleanup",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/user-types/{{tempUserTypeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "user-types",
+                "{{tempUserTypeId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('tempUserTypeId is set', function () {",
+                  "    pm.expect(pm.collectionVariables.get('tempUserTypeId')).to.not.be.empty;",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 204 or 404', function () {",
+                  "    pm.expect([204, 404]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
