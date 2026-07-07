@@ -3,14 +3,11 @@ package com.restaurant.management.presentation.controller;
 import com.restaurant.management.application.dto.output.RestaurantOutputData;
 import com.restaurant.management.application.usecase.RestaurantUseCase;
 import com.restaurant.management.domain.exception.ResourceNotFoundException;
-import com.restaurant.management.infrastructure.config.SecurityConfig;
 import com.restaurant.management.presentation.exception.GlobalExceptionHandler;
 import com.restaurant.management.presentation.presenter.RestaurantRestPresenter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,8 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         RestaurantRestPresenter.class,
         GlobalExceptionHandler.class
 })
-@Import(SecurityConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
 class RestaurantControllerTest {
 
     @Autowired
