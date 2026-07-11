@@ -8,12 +8,9 @@ import com.restaurant.management.application.gateway.UserTypeGateway;
 import com.restaurant.management.domain.entity.User;
 import com.restaurant.management.domain.entity.UserType;
 import com.restaurant.management.domain.exception.ResourceNotFoundException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service
 public class UserInteractor implements UserUseCase {
 
     private final UserGateway userGateway;
@@ -28,7 +25,6 @@ public class UserInteractor implements UserUseCase {
     }
 
     @Override
-    @Transactional
     public UserOutputData create(CreateUserInputData inputData) {
         UserType userType = userTypeGateway.findById(inputData.userTypeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tipo de usuário não encontrado"));
@@ -43,7 +39,6 @@ public class UserInteractor implements UserUseCase {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<UserOutputData> findAll() {
         return userGateway.findAll()
                 .stream()
@@ -52,7 +47,6 @@ public class UserInteractor implements UserUseCase {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public UserOutputData findById(Long id) {
         User user = userGateway.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
@@ -61,7 +55,6 @@ public class UserInteractor implements UserUseCase {
     }
 
     @Override
-    @Transactional
     public UserOutputData update(UpdateUserInputData inputData) {
         User user = userGateway.findById(inputData.id())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
@@ -77,7 +70,6 @@ public class UserInteractor implements UserUseCase {
     }
 
     @Override
-    @Transactional
     public void delete(Long id) {
         userGateway.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));

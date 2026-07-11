@@ -8,6 +8,7 @@ import com.restaurant.management.application.gateway.UserGateway;
 import com.restaurant.management.domain.entity.Restaurant;
 import com.restaurant.management.domain.entity.User;
 import com.restaurant.management.domain.entity.UserType;
+import com.restaurant.management.domain.exception.BusinessRuleException;
 import com.restaurant.management.domain.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,8 +78,8 @@ class RestaurantInteractorTest {
 
         when(userGateway.findById(1L)).thenReturn(Optional.of(client));
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
+        BusinessRuleException exception = assertThrows(
+                BusinessRuleException.class,
                 () -> restaurantInteractor.create(inputData)
         );
 

@@ -5,6 +5,7 @@ import com.restaurant.management.application.dto.input.UpdateUserTypeInputData;
 import com.restaurant.management.application.dto.output.UserTypeOutputData;
 import com.restaurant.management.application.gateway.UserTypeGateway;
 import com.restaurant.management.domain.entity.UserType;
+import com.restaurant.management.domain.exception.BusinessRuleException;
 import com.restaurant.management.domain.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,8 +50,8 @@ class UserTypeInteractorTest {
 
         when(userTypeGateway.existsByNameIgnoreCase("Cliente")).thenReturn(true);
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
+        BusinessRuleException exception = assertThrows(
+                BusinessRuleException.class,
                 () -> userTypeInteractor.create(inputData)
         );
 

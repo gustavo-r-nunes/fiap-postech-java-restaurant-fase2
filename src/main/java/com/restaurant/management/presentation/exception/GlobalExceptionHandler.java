@@ -1,5 +1,6 @@
 package com.restaurant.management.presentation.exception;
 
+import com.restaurant.management.domain.exception.BusinessRuleException;
 import com.restaurant.management.domain.exception.ResourceNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -64,6 +65,15 @@ public class GlobalExceptionHandler {
         problem.setTitle("Recurso não encontrado");
         problem.setDetail(exception.getMessage());
         problem.setType(URI.create("/errors/not-found"));
+        return problem;
+    }
+
+    @ExceptionHandler(BusinessRuleException.class)
+    public ProblemDetail handleBusinessRuleException(BusinessRuleException exception){
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.UNPROCESSABLE_CONTENT);
+        problem.setTitle("Erro de processamento de conteúdo");
+        problem.setDetail(exception.getMessage());
+        problem.setType(URI.create("/errors/business-error"));
         return problem;
     }
 }
