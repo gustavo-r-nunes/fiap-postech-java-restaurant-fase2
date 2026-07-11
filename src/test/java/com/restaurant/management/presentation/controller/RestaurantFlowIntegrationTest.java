@@ -7,9 +7,11 @@ import com.restaurant.management.infrastructure.persistence.repository.UserJpaRe
 import com.restaurant.management.infrastructure.persistence.repository.UserTypeJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class RestaurantFlowIntegrationTest {
 
     @Container
@@ -36,22 +39,17 @@ class RestaurantFlowIntegrationTest {
 
     private RestClient restClient;
 
-    private final MenuItemJpaRepository menuItemRepository;
-    private final RestaurantJpaRepository restaurantJpaRepository;
-    private final UserJpaRepository userRepository;
-    private final UserTypeJpaRepository userTypeRepository;
+    @Autowired
+    private MenuItemJpaRepository menuItemRepository;
 
-    RestaurantFlowIntegrationTest(
-            MenuItemJpaRepository menuItemRepository,
-            RestaurantJpaRepository restaurantJpaRepository,
-            UserJpaRepository userRepository,
-            UserTypeJpaRepository userTypeRepository
-    ) {
-        this.menuItemRepository = menuItemRepository;
-        this.restaurantJpaRepository = restaurantJpaRepository;
-        this.userRepository = userRepository;
-        this.userTypeRepository = userTypeRepository;
-    }
+    @Autowired
+    private RestaurantJpaRepository restaurantJpaRepository;
+
+    @Autowired
+    private UserJpaRepository userRepository;
+
+    @Autowired
+    private UserTypeJpaRepository userTypeRepository;
 
     @BeforeEach
     void setUp() {

@@ -78,6 +78,9 @@ public class UserInteractor implements UserUseCase {
     }
 
     private UserOutputData toOutputData(User user) {
+        if (user.getUserType() == null) {
+            throw new IllegalStateException("Usuário sem tipo vinculado");
+        }
         return new UserOutputData(
                 user.getId(),
                 user.getName(),

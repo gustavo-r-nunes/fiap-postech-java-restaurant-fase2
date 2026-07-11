@@ -1,9 +1,5 @@
 package com.restaurant.management.presentation.controller;
 
-import com.restaurant.management.infrastructure.persistence.repository.MenuItemJpaRepository;
-import com.restaurant.management.infrastructure.persistence.repository.RestaurantJpaRepository;
-import com.restaurant.management.infrastructure.persistence.repository.UserJpaRepository;
-import com.restaurant.management.infrastructure.persistence.repository.UserTypeJpaRepository;
 import com.restaurant.management.integration.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestClientResponseException;
@@ -15,15 +11,6 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MenuItemControllerIntegrationTest extends AbstractIntegrationTest {
-
-    MenuItemControllerIntegrationTest(
-            MenuItemJpaRepository menuItemRepository,
-            RestaurantJpaRepository restaurantRepository,
-            UserJpaRepository userRepository,
-            UserTypeJpaRepository userTypeRepository
-    ) {
-        super(menuItemRepository, restaurantRepository, userRepository, userTypeRepository);
-    }
 
     @Test
     void shouldCreateMenuItem() {

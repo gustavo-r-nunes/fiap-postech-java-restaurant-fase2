@@ -97,6 +97,9 @@ public class MenuItemInteractor implements MenuItemUseCase {
     }
 
     private MenuItemOutputData toOutputData(MenuItem menuItem) {
+        if (menuItem.getRestaurant() == null) {
+            throw new IllegalStateException("Item do cardápio sem restaurante vinculado");
+        }
         return new MenuItemOutputData(
                 menuItem.getId(),
                 menuItem.getName(),

@@ -5,10 +5,6 @@ import com.restaurant.management.application.dto.input.UpdateUserTypeInputData;
 import com.restaurant.management.application.dto.output.UserTypeOutputData;
 import com.restaurant.management.application.usecase.UserTypeUseCase;
 import com.restaurant.management.domain.exception.ResourceNotFoundException;
-import com.restaurant.management.infrastructure.persistence.repository.MenuItemJpaRepository;
-import com.restaurant.management.infrastructure.persistence.repository.RestaurantJpaRepository;
-import com.restaurant.management.infrastructure.persistence.repository.UserJpaRepository;
-import com.restaurant.management.infrastructure.persistence.repository.UserTypeJpaRepository;
 import com.restaurant.management.integration.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +17,6 @@ class UserTypeInteractorIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private UserTypeUseCase userTypeUseCase;
-
-    UserTypeInteractorIntegrationTest(
-            MenuItemJpaRepository menuItemRepository,
-            RestaurantJpaRepository restaurantRepository,
-            UserJpaRepository userRepository,
-            UserTypeJpaRepository userTypeRepository
-    ) {
-        super(menuItemRepository, restaurantRepository, userRepository, userTypeRepository);
-    }
 
     @Test
     void shouldCreateUserTypeUsingRealDatabase() {
