@@ -8,12 +8,11 @@ import com.restaurant.management.application.gateway.RestaurantGateway;
 import com.restaurant.management.domain.entity.MenuItem;
 import com.restaurant.management.domain.entity.Restaurant;
 import com.restaurant.management.domain.exception.ResourceNotFoundException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+//import org.springframework.stereotype.Service;
+//import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service
 public class MenuItemInteractor implements MenuItemUseCase {
 
     private final MenuItemGateway menuItemGateway;
@@ -28,7 +27,6 @@ public class MenuItemInteractor implements MenuItemUseCase {
     }
 
     @Override
-    @Transactional
     public MenuItemOutputData create(CreateMenuItemInputData inputData) {
         Restaurant restaurant = restaurantGateway.findById(inputData.restaurantId())
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurante não encontrado"));
@@ -46,7 +44,6 @@ public class MenuItemInteractor implements MenuItemUseCase {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<MenuItemOutputData> findAll() {
         return menuItemGateway.findAll()
                 .stream()
@@ -55,7 +52,6 @@ public class MenuItemInteractor implements MenuItemUseCase {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public MenuItemOutputData findById(Long id) {
         MenuItem menuItem = menuItemGateway.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item do cardápio não encontrado"));
@@ -64,7 +60,6 @@ public class MenuItemInteractor implements MenuItemUseCase {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<MenuItemOutputData> findByRestaurantId(Long restaurantId) {
         restaurantGateway.findById(restaurantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurante não encontrado"));
@@ -76,7 +71,6 @@ public class MenuItemInteractor implements MenuItemUseCase {
     }
 
     @Override
-    @Transactional
     public MenuItemOutputData update(UpdateMenuItemInputData inputData) {
         MenuItem menuItem = menuItemGateway.findById(inputData.id())
                 .orElseThrow(() -> new ResourceNotFoundException("Item do cardápio não encontrado"));
@@ -95,7 +89,6 @@ public class MenuItemInteractor implements MenuItemUseCase {
     }
 
     @Override
-    @Transactional
     public void delete(Long id) {
         menuItemGateway.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item do cardápio não encontrado"));

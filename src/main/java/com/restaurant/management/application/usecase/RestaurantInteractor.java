@@ -9,12 +9,9 @@ import com.restaurant.management.domain.entity.Restaurant;
 import com.restaurant.management.domain.entity.User;
 import com.restaurant.management.domain.exception.BusinessRuleException;
 import com.restaurant.management.domain.exception.ResourceNotFoundException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service
 public class RestaurantInteractor implements RestaurantUseCase {
 
     private static final String RESTAURANT_OWNER_TYPE = "Dono de Restaurante";
@@ -31,7 +28,6 @@ public class RestaurantInteractor implements RestaurantUseCase {
     }
 
     @Override
-    @Transactional
     public RestaurantOutputData create(CreateRestaurantInputData inputData) {
         User owner = userGateway.findById(inputData.ownerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
@@ -50,7 +46,6 @@ public class RestaurantInteractor implements RestaurantUseCase {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<RestaurantOutputData> findAll() {
         return restaurantGateway.findAll()
                 .stream()
@@ -59,7 +54,6 @@ public class RestaurantInteractor implements RestaurantUseCase {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public RestaurantOutputData findById(Long id) {
         Restaurant restaurant = restaurantGateway.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurante não encontrado"));
@@ -68,7 +62,6 @@ public class RestaurantInteractor implements RestaurantUseCase {
     }
 
     @Override
-    @Transactional
     public RestaurantOutputData update(UpdateRestaurantInputData inputData) {
         Restaurant restaurant = restaurantGateway.findById(inputData.id())
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurante não encontrado"));
@@ -88,7 +81,6 @@ public class RestaurantInteractor implements RestaurantUseCase {
     }
 
     @Override
-    @Transactional
     public void delete(Long id) {
         restaurantGateway.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurante não encontrado"));
