@@ -1,15 +1,19 @@
 package com.restaurant.management.presentation.exception;
 
+import com.restaurant.management.domain.exception.BusinessRuleException;
 import com.restaurant.management.domain.exception.ResourceNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.net.ResponseCache;
 import java.net.URI;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -64,6 +68,15 @@ public class GlobalExceptionHandler {
         problem.setTitle("Recurso não encontrado");
         problem.setDetail(exception.getMessage());
         problem.setType(URI.create("/errors/not-found"));
+        return problem;
+    }
+
+    @ExceptionHandler(BusinessRuleException.class)
+    public ProblemDetail handleBusinessRuleException(BusinessRuleException exception){
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.UNPROCESSABLE_CONTENT);
+        problem.setTitle("Erro de processamento de conteúdo");
+        problem.setDetail(exception.getMessage());
+        problem.setType(URI.create("/errors/business-error"));
         return problem;
     }
 }

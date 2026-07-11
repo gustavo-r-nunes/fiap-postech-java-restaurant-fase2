@@ -5,6 +5,7 @@ import com.restaurant.management.application.dto.input.UpdateUserTypeInputData;
 import com.restaurant.management.application.dto.output.UserTypeOutputData;
 import com.restaurant.management.application.gateway.UserTypeGateway;
 import com.restaurant.management.domain.entity.UserType;
+import com.restaurant.management.domain.exception.BusinessRuleException;
 import com.restaurant.management.domain.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,7 @@ public class UserTypeInteractor implements UserTypeUseCase {
     @Transactional
     public UserTypeOutputData create(CreateUserTypeInputData inputData) {
         if (userTypeGateway.existsByNameIgnoreCase(inputData.name())) {
-            throw new IllegalArgumentException("Já existe um tipo de usuário com esse nome");
+            throw new BusinessRuleException("Já existe um tipo de usuário com esse nome");
         }
 
         UserType userType = new UserType(inputData.name());
@@ -59,7 +60,7 @@ public class UserTypeInteractor implements UserTypeUseCase {
         userTypeGateway.findByNameIgnoreCase(inputData.name())
                 .filter(existing -> !existing.getId().equals(inputData.id()))
                 .ifPresent(existing -> {
-                    throw new IllegalArgumentException("Já existe um tipo de usuário com esse nome");
+                    throw new BusinessRuleException("Já existe um tipo de usuário com esse nome");
                 });
 
         userType.setName(inputData.name());

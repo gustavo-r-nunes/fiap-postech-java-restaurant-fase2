@@ -7,6 +7,7 @@ import com.restaurant.management.application.gateway.RestaurantGateway;
 import com.restaurant.management.application.gateway.UserGateway;
 import com.restaurant.management.domain.entity.Restaurant;
 import com.restaurant.management.domain.entity.User;
+import com.restaurant.management.domain.exception.BusinessRuleException;
 import com.restaurant.management.domain.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,7 +112,7 @@ public class RestaurantInteractor implements RestaurantUseCase {
         if (owner.getUserType() == null ||
                 owner.getUserType().getName() == null ||
                 !RESTAURANT_OWNER_TYPE.equalsIgnoreCase(owner.getUserType().getName())) {
-            throw new IllegalArgumentException("O usuário informado deve ser do tipo Dono de Restaurante");
+            throw new BusinessRuleException("O usuário informado deve ser do tipo Dono de Restaurante");
         }
     }
 }
