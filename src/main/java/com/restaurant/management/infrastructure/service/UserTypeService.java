@@ -3,6 +3,7 @@ package com.restaurant.management.infrastructure.service;
 import com.restaurant.management.application.dto.input.CreateUserTypeInputData;
 import com.restaurant.management.application.dto.input.UpdateUserTypeInputData;
 import com.restaurant.management.application.dto.output.UserTypeOutputData;
+import com.restaurant.management.application.gateway.UserTypeGateway;
 import com.restaurant.management.application.usecase.UserTypeInteractor;
 import com.restaurant.management.application.usecase.UserTypeUseCase;
 
@@ -15,8 +16,8 @@ import java.util.List;
 public class UserTypeService implements UserTypeUseCase {
     private final UserTypeInteractor interactor;
 
-    public UserTypeService(UserTypeInteractor interactor) {
-        this.interactor = interactor;
+    public UserTypeService(UserTypeGateway userTypeGateway) {
+        this.interactor = new UserTypeInteractor(userTypeGateway);
     }
 
     @Override

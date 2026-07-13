@@ -7,6 +7,7 @@ import com.restaurant.management.application.dto.input.UpdateRestaurantInputData
 import com.restaurant.management.application.dto.output.RestaurantOutputData;
 import com.restaurant.management.application.dto.output.UserOutputData;
 import com.restaurant.management.application.dto.output.UserTypeOutputData;
+import com.restaurant.management.domain.exception.BusinessRuleException;
 import com.restaurant.management.domain.exception.ResourceNotFoundException;
 import com.restaurant.management.integration.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
@@ -152,7 +153,7 @@ class RestaurantInteractorIntegrationTest extends AbstractIntegrationTest {
         UserOutputData client = createClientUser();
 
         assertThrows(
-                IllegalArgumentException.class,
+                BusinessRuleException.class,
                 () -> restaurantUseCase.create(
                         new CreateRestaurantInputData(
                                 "Restaurante Inválido",

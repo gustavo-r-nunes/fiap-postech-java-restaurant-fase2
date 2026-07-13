@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.restaurant.management.application.dto.input.CreateMenuItemInputData;
 import com.restaurant.management.application.dto.input.UpdateMenuItemInputData;
 import com.restaurant.management.application.dto.output.MenuItemOutputData;
+import com.restaurant.management.application.gateway.MenuItemGateway;
+import com.restaurant.management.application.gateway.RestaurantGateway;
 import com.restaurant.management.application.usecase.MenuItemInteractor;
 import com.restaurant.management.application.usecase.MenuItemUseCase;
 
@@ -16,8 +18,8 @@ import com.restaurant.management.application.usecase.MenuItemUseCase;
 public class MenuItemService implements MenuItemUseCase{
     private final MenuItemInteractor interactor;
 
-    public MenuItemService(MenuItemInteractor interactor){
-        this.interactor = interactor;
+    public MenuItemService(MenuItemGateway menuItemGateway, RestaurantGateway restaurantGateway){
+        this.interactor = new MenuItemInteractor(menuItemGateway, restaurantGateway);
     }
 
     @Override
