@@ -161,7 +161,7 @@ class RestaurantFlowIntegrationTest {
                 .retrieve()
                 .toBodilessEntity());
 
-        assertEquals(400, exception.getStatusCode().value());
+        assertEquals(422, exception.getStatusCode().value());
 
         assertNotNull(exception);
     }

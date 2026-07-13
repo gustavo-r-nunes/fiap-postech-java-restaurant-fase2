@@ -3,6 +3,8 @@ package com.restaurant.management.infrastructure.service;
 import com.restaurant.management.application.dto.input.CreateRestaurantInputData;
 import com.restaurant.management.application.dto.input.UpdateRestaurantInputData;
 import com.restaurant.management.application.dto.output.RestaurantOutputData;
+import com.restaurant.management.application.gateway.RestaurantGateway;
+import com.restaurant.management.application.gateway.UserGateway;
 import com.restaurant.management.application.usecase.RestaurantInteractor;
 import com.restaurant.management.application.usecase.RestaurantUseCase;
 
@@ -16,8 +18,8 @@ public class RestaurantService implements RestaurantUseCase{
 
     private final RestaurantInteractor interactor;
 
-    public RestaurantService(RestaurantInteractor interactor){
-        this.interactor = interactor;
+    public RestaurantService(RestaurantGateway restaurantGateway, UserGateway userGateway){
+        this.interactor = new RestaurantInteractor(restaurantGateway, userGateway);
     }
 
     @Override
