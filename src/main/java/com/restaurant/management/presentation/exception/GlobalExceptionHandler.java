@@ -76,4 +76,22 @@ public class GlobalExceptionHandler {
         problem.setType(URI.create("/errors/business-error"));
         return problem;
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ProblemDetail handleIllegalState(IllegalStateException exception) {
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        problem.setTitle("Erro interno");
+        problem.setDetail(exception.getMessage());
+        problem.setType(URI.create("/errors/internal-error"));
+        return problem;
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ProblemDetail handleGeneric(Exception exception) {
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        problem.setTitle("Erro interno inesperado");
+        problem.setDetail("Ocorreu um erro inesperado. Tente novamente mais tarde.");
+        problem.setType(URI.create("/errors/internal-error"));
+        return problem;
+    }
 }

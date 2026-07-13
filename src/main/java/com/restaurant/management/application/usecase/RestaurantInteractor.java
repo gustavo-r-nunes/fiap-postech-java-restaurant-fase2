@@ -89,6 +89,9 @@ public class RestaurantInteractor implements RestaurantUseCase {
     }
 
     private RestaurantOutputData toOutputData(Restaurant restaurant) {
+        if (restaurant.getOwner() == null) {
+            throw new IllegalStateException("Restaurante sem proprietário vinculado");
+        }
         return new RestaurantOutputData(
                 restaurant.getId(),
                 restaurant.getName(),

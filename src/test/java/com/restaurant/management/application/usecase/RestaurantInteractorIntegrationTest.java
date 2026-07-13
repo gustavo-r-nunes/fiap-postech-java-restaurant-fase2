@@ -8,10 +8,6 @@ import com.restaurant.management.application.dto.output.RestaurantOutputData;
 import com.restaurant.management.application.dto.output.UserOutputData;
 import com.restaurant.management.application.dto.output.UserTypeOutputData;
 import com.restaurant.management.domain.exception.ResourceNotFoundException;
-import com.restaurant.management.infrastructure.persistence.repository.MenuItemJpaRepository;
-import com.restaurant.management.infrastructure.persistence.repository.RestaurantJpaRepository;
-import com.restaurant.management.infrastructure.persistence.repository.UserJpaRepository;
-import com.restaurant.management.infrastructure.persistence.repository.UserTypeJpaRepository;
 import com.restaurant.management.integration.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,15 +26,6 @@ class RestaurantInteractorIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private UserTypeUseCase userTypeUseCase;
-
-    RestaurantInteractorIntegrationTest(
-            MenuItemJpaRepository menuItemRepository,
-            RestaurantJpaRepository restaurantRepository,
-            UserJpaRepository userRepository,
-            UserTypeJpaRepository userTypeRepository
-    ) {
-        super(menuItemRepository, restaurantRepository, userRepository, userTypeRepository);
-    }
 
     @Test
     void shouldCreateRestaurantUsingRealDatabase() {

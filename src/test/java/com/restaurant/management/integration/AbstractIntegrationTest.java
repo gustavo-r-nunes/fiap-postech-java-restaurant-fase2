@@ -5,9 +5,11 @@ import com.restaurant.management.infrastructure.persistence.repository.Restauran
 import com.restaurant.management.infrastructure.persistence.repository.UserJpaRepository;
 import com.restaurant.management.infrastructure.persistence.repository.UserTypeJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestClient;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -17,6 +19,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public abstract class AbstractIntegrationTest {
 
     @Container
@@ -28,22 +31,17 @@ public abstract class AbstractIntegrationTest {
 
     protected RestClient restClient;
 
-    protected final MenuItemJpaRepository menuItemRepository;
-    protected final RestaurantJpaRepository restaurantRepository;
-    protected final UserJpaRepository userRepository;
-    protected final UserTypeJpaRepository userTypeRepository;
+    @Autowired
+    protected MenuItemJpaRepository menuItemRepository;
 
-    protected AbstractIntegrationTest(
-            MenuItemJpaRepository menuItemRepository,
-            RestaurantJpaRepository restaurantRepository,
-            UserJpaRepository userRepository,
-            UserTypeJpaRepository userTypeRepository
-    ) {
-        this.menuItemRepository = menuItemRepository;
-        this.restaurantRepository = restaurantRepository;
-        this.userRepository = userRepository;
-        this.userTypeRepository = userTypeRepository;
-    }
+    @Autowired
+    protected RestaurantJpaRepository restaurantRepository;
+
+    @Autowired
+    protected UserJpaRepository userRepository;
+
+    @Autowired
+    protected UserTypeJpaRepository userTypeRepository;
 
     @BeforeEach
     void setUpIntegrationTest() {

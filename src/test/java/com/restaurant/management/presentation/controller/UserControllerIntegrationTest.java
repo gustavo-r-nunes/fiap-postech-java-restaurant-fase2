@@ -15,15 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerIntegrationTest extends AbstractIntegrationTest {
 
-    UserControllerIntegrationTest(
-            MenuItemJpaRepository menuItemRepository,
-            RestaurantJpaRepository restaurantRepository,
-            UserJpaRepository userRepository,
-            UserTypeJpaRepository userTypeRepository
-    ) {
-        super(menuItemRepository, restaurantRepository, userRepository, userTypeRepository);
-    }
-
     @Test
     void shouldCreateUser() {
         Integer userTypeId = createUserType("Cliente");
